@@ -6,7 +6,7 @@
  */
 
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { WalletLinkSchema } from "@/lib/auth.server";
 import { ensureSchema, hasDatabase } from "@/lib/db.server";
 import { assertRateLimit } from "@/lib/rate-limit.server";
 import {
@@ -23,15 +23,22 @@ export const getAdminSessionFn = createServerFn({ method: "GET" }).handler(async
   return getAdminSession();
 });
 
+/** One-time code the wallet signs; proves the caller holds the admin wallet. */
+export const adminProofPayloadFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { issueProofPayload } = await import("@/lib/onchain/ton-proof.server");
+  return { payload: issueProofPayload() };
+});
+
 export const adminLoginFn = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) =>
-    z.object({ wallet: z.string().min(10).max(120) }).parse(input),
-  )
+  .inputValidator((input: unknown) => WalletLinkSchema.parse(input))
   .handler(async ({ data }) => {
     if (!hasDatabase()) throw new Error("database_unavailable");
+    assertRateLimit(`admin:login:${data.address}`, 10, 60_000);
+    const { verifyWalletProof } = await import("@/lib/onchain/ton-proof.server");
+    const check = await verifyWalletProof(data);
+    if (!check.ok) throw new Error(check.reason);
     await ensureSchema();
-    assertRateLimit(`admin:login:${data.wallet}`, 10, 60_000);
-    return adminLogin(data.wallet);
+    return adminLogin(data.address);
   });
 
 export const adminLogoutFn = createServerFn({ method: "POST" }).handler(async () => {

@@ -7,7 +7,6 @@ import {
   requireUserId,
   sessionUserId,
   setWallet,
-  validateTonProofShape,
 } from "@/lib/auth.server";
 import { mutableSession } from "@/lib/session.server";
 import { assertRateLimit } from "@/lib/rate-limit.server";
@@ -24,8 +23,14 @@ export const getCurrentUser = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** One-time code for the wallet to sign before linking. */
+export const getTonProofPayload = createServerFn({ method: "GET" }).handler(async () => {
+  const { issueProofPayload } = await import("@/lib/onchain/ton-proof.server");
+  return { payload: issueProofPayload() };
+});
+
 /**
- * Link wallet with ton_proof shape checks.
+ * Link wallet with full Ed25519 ton_proof verification.
  * Client must send address + proof { timestamp, domain, signature, payload }.
  */
 export const linkWallet = createServerFn({ method: "POST" })
@@ -36,13 +41,9 @@ export const linkWallet = createServerFn({ method: "POST" })
     assertRateLimit(`wallet:link:${userId}`, 5, 60_000);
     await ensureSchema();
 
-    const proofCheck = validateTonProofShape(data);
-    if (!proofCheck.ok) {
-      throw new Error(proofCheck.reason);
-    }
-
-    // TODO: full Ed25519 ton_proof verification with @ton/crypto + stateInit
-    // when dependency is added. Shape + domain + freshness already enforced.
+    const { verifyWalletProof } = await import("@/lib/onchain/ton-proof.server");
+    const proofCheck = await verifyWalletProof(data);
+    if (!proofCheck.ok) throw new Error(proofCheck.reason);
 
     return setWallet(userId, data.address);
   });

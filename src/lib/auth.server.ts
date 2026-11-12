@@ -30,9 +30,8 @@ export const WalletSchema = z.object({
 });
 
 /**
- * TON Connect ton_proof payload (shape validation).
- * Full Ed25519 verification should be added with @ton/crypto when ready.
- * Until then we require a fresh proof shape + domain + timestamp bounds.
+ * TON Connect ton_proof payload shape. Signature, payload, domain and
+ * freshness are verified in onchain/ton-proof.server.ts.
  */
 export const WalletLinkSchema = z.object({
   address: z
@@ -58,47 +57,6 @@ export const WalletLinkSchema = z.object({
 });
 
 export type WalletLinkInput = z.infer<typeof WalletLinkSchema>;
-
-const ALLOWED_PROOF_DOMAINS = [
-  "waronnations.vercel.app",
-  "localhost",
-  "127.0.0.1",
-];
-
-/** Max age of ton_proof timestamp (seconds). */
-const PROOF_MAX_AGE_SEC = 15 * 60;
-
-export function validateTonProofShape(input: WalletLinkInput): {
-  ok: true;
-} | { ok: false; reason: string } {
-  const nowSec = Math.floor(Date.now() / 1000);
-  const ts = input.proof.timestamp;
-
-  if (ts > nowSec + 60) {
-    return { ok: false, reason: "proof_timestamp_future" };
-  }
-  if (nowSec - ts > PROOF_MAX_AGE_SEC) {
-    return { ok: false, reason: "proof_expired" };
-  }
-
-  const domain = input.proof.domain.value
-    .replace(/^https?:\/\//, "")
-    .replace(/\/$/, "")
-    .toLowerCase();
-
-  const allowed = ALLOWED_PROOF_DOMAINS.some(
-    (d) => domain === d || domain.endsWith(`.${d}`),
-  );
-  if (!allowed) {
-    return { ok: false, reason: "proof_domain_mismatch" };
-  }
-
-  if (input.proof.domain.lengthBytes !== input.proof.domain.value.length) {
-    return { ok: false, reason: "proof_domain_length_mismatch" };
-  }
-
-  return { ok: true };
-}
 
 export async function sessionUserId(): Promise<number | null> {
   const session = await readSession();

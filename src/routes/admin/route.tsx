@@ -8,11 +8,12 @@
 
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { useTonAddress, useTonConnectUI, TonConnectButton } from "@tonconnect/ui-react";
+import { useTonAddress, useTonConnectUI, TonConnectButton, type Wallet as TcWallet } from "@tonconnect/ui-react";
 import {
   getAdminSessionFn,
   adminLoginFn,
   adminLogoutFn,
+  adminProofPayloadFn,
 } from "@/lib/admin.functions";
 import {
   LayoutDashboard,
@@ -97,41 +98,60 @@ function AdminLayoutClient() {
     };
   }, []);
 
-  const tryAdminLogin = useCallback(async (wallet: string) => {
+  const tryAdminLogin = useCallback(async (wallet: TcWallet) => {
+    const item = wallet.connectItems?.tonProof;
+    if (!item || !("proof" in item)) return;
     setLoggingIn(true);
     setLoginError(null);
     try {
-      await adminLoginFn({ data: { wallet } });
+      await adminLoginFn({
+        data: {
+          address: wallet.account.address,
+          proof: item.proof,
+          publicKey: wallet.account.publicKey,
+          walletStateInit: wallet.account.walletStateInit,
+        },
+      });
       const s = await getAdminSessionFn();
       setSession(s);
-      if (!s.isAdmin) {
-        setLoginError(
-          "Wallet connected but not authorized. Check ADMIN_WALLETS env variable.",
-        );
-      }
-    } catch (e: any) {
-      const msg = String(e?.message || e || "");
-      if (msg.includes("wallet_not_allowed")) {
-        setLoginError(
-          "This wallet is not in ADMIN_WALLETS. Add it in Vercel / .env and restart.",
-        );
-      } else {
-        setLoginError(msg || "Login failed.");
-      }
+      if (!s.isAdmin) setLoginError("Wallet verified but not authorized. Check ADMIN_WALLETS.");
+    } catch (e: unknown) {
+      const msg = String((e as Error)?.message || e || "");
+      setLoginError(
+        msg.includes("wallet_not_allowed")
+          ? "This wallet is not in ADMIN_WALLETS."
+          : msg.startsWith("proof_") || msg.includes("signature") || msg.includes("public_key")
+            ? `Wallet signature check failed (${msg}). Reconnect and approve the sign-in request.`
+            : msg || "Login failed.",
+      );
       setSession({ isAdmin: false, wallet: null, userId: null });
     } finally {
       setLoggingIn(false);
     }
   }, []);
 
+  // Every connect carries a fresh one-time code that the wallet must sign.
   useEffect(() => {
-    if (loading) return;
-    if (session?.isAdmin) return;
-    if (!address) return;
-    if (loggingIn) return;
-
-    void tryAdminLogin(address);
-  }, [address, loading, session?.isAdmin, loggingIn, tryAdminLogin]);
+    let cancelled = false;
+    async function refreshPayload() {
+      tonConnectUI.setConnectRequestParameters({ state: "loading" });
+      try {
+        const { payload } = await adminProofPayloadFn();
+        if (!cancelled) tonConnectUI.setConnectRequestParameters({ state: "ready", value: { tonProof: payload } });
+      } catch {
+        if (!cancelled) tonConnectUI.setConnectRequestParameters(null);
+      }
+    }
+    void refreshPayload();
+    const off = tonConnectUI.onStatusChange((w) => {
+      if (w) void tryAdminLogin(w);
+      else void refreshPayload();
+    });
+    return () => {
+      cancelled = true;
+      off();
+    };
+  }, [tonConnectUI, tryAdminLogin]);
 
   async function handleLogout() {
     try {
@@ -144,8 +164,10 @@ function AdminLayoutClient() {
     }
   }
 
-  function openConnectModal() {
+  async function openConnectModal() {
     setLoginError(null);
+    // A restored connection has no fresh signature: reconnect to sign in.
+    if (tonConnectUI.connected) await tonConnectUI.disconnect();
     void tonConnectUI.openModal();
   }
 
@@ -192,7 +214,7 @@ function AdminLayoutClient() {
             ) : (
               <>
                 <Wallet className="h-4 w-4" />
-                {address ? "Retry admin login" : "Connect Wallet"}
+                {address ? "Sign in with wallet" : "Connect Wallet"}
               </>
             )}
           </button>

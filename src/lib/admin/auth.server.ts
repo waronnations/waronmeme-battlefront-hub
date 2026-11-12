@@ -4,24 +4,34 @@
  * Server-only. Re-exported from @/lib/admin.server.
  */
 
+import { Address } from "@ton/core";
 import { sql } from "@/lib/db.server";
 import { readSession, mutableSession, type WonSession } from "@/lib/session.server";
 
 // ─── Env helpers ───────────────────────────────────────────────────
 
+/** Raw form (0:hex) when parseable, so friendly and raw spellings match. */
+function canonical(w: string): string {
+  try {
+    return Address.parse(w.trim()).toRawString();
+  } catch {
+    return w.trim().toLowerCase();
+  }
+}
+
 function getAdminWallets(): string[] {
   const raw = process.env.ADMIN_WALLETS || "";
   return raw
     .split(",")
-    .map((w) => w.trim().toLowerCase())
-    .filter(Boolean);
+    .map((w) => w.trim())
+    .filter(Boolean)
+    .map(canonical);
 }
 
 export function isWalletAllowed(wallet: string | null | undefined): boolean {
   if (!wallet) return false;
-  const normalized = wallet.trim().toLowerCase();
   const allowed = getAdminWallets();
-  return allowed.length > 0 && allowed.includes(normalized);
+  return allowed.length > 0 && allowed.includes(canonical(wallet));
 }
 
 // ─── Auth ──────────────────────────────────────────────────────────
