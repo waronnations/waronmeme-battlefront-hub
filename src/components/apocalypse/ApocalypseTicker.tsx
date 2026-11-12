@@ -16,6 +16,7 @@ import {
 import { CachedTokenImage } from "@/components/ui/CachedTokenImage";
 import { TacticalCTA, TacticalModal, TacticalSection, tacticalFeedback } from "@/components/ui/TacticalModal";
 import { cn } from "@/lib/utils";
+import { factionSectors, totalVolume } from "@/lib/war-room/sectors";
 
 const BAND_LABEL: Record<RadiationBand, string> = {
   calm: "Calm",
@@ -77,8 +78,9 @@ export function ApocalypseTicker() {
   const standings = useMemo(() => apexStandings(coins, holders, 5), [coins, holders]);
   useEffect(() => preloadTokenImages(standings.map((s) => s.image)), [standings]);
 
+  const factionVolumeUsd = useMemo(() => totalVolume(factionSectors(coins)), [coins]);
   const clock = now === null ? null : doomsdayClock(now);
-  const rad = now === null ? null : radiationLevel({ now, coins });
+  const rad = now === null ? null : radiationLevel({ now, coins, factionVolumeUsd });
   const warnings = clock && rad ? falloutWarnings({ level: rad.level, msLeft: clock.msLeft, standings, coins }) : [];
   const apex = standings[0];
 

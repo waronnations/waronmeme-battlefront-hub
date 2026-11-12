@@ -11,15 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WarRouteImport } from './routes/war'
+import { Route as WarRoomRouteImport } from './routes/war-room'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminEconomyRouteImport } from './routes/admin/economy'
 import { Route as AdminLogsRouteImport } from './routes/admin/logs'
 import { Route as AdminNationsRouteImport } from './routes/admin/nations'
 import { Route as AdminToolsRouteImport } from './routes/admin/tools'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as ApiPublicAgentsRouteImport } from './routes/api/public/agents'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicNftAssetIdRouteImport } from './routes/api/public/nft/$assetId'
 import { Route as ApiPublicTelegramLoginRouteImport } from './routes/api/public/telegram/login'
@@ -34,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -51,6 +60,17 @@ const WarRoute = WarRouteImport.update({
   path: '/war',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WarRoomRoute = WarRoomRouteImport.update({
+  id: '/war-room',
+  path: '/war-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -80,6 +100,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const ApiPublicAgentsRoute = ApiPublicAgentsRouteImport.update({
+  id: '/api/public/agents',
+  path: '/api/public/agents',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
@@ -111,15 +136,19 @@ const ApiPublicNftAssetIdImageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/war': typeof WarRoute
+  '/war-room': typeof WarRoomRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/economy': typeof AdminEconomyRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/nations': typeof AdminNationsRoute
   '/admin/tools': typeof AdminToolsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/agents': typeof ApiPublicAgentsRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/nft/$assetId': typeof ApiPublicNftAssetIdRouteWithChildren
   '/api/public/telegram/login': typeof ApiPublicTelegramLoginRoute
@@ -128,15 +157,19 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/war': typeof WarRoute
+  '/war-room': typeof WarRoomRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/economy': typeof AdminEconomyRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/nations': typeof AdminNationsRoute
   '/admin/tools': typeof AdminToolsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/agents': typeof ApiPublicAgentsRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/nft/$assetId': typeof ApiPublicNftAssetIdRouteWithChildren
   '/api/public/telegram/login': typeof ApiPublicTelegramLoginRoute
@@ -147,15 +180,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/war': typeof WarRoute
+  '/war-room': typeof WarRoomRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/economy': typeof AdminEconomyRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/nations': typeof AdminNationsRoute
   '/admin/tools': typeof AdminToolsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/agents': typeof ApiPublicAgentsRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/nft/$assetId': typeof ApiPublicNftAssetIdRouteWithChildren
   '/api/public/telegram/login': typeof ApiPublicTelegramLoginRoute
@@ -167,15 +204,19 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/mcp'
     | '/privacy'
     | '/terms'
     | '/war'
+    | '/war-room'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/economy'
     | '/admin/logs'
     | '/admin/nations'
     | '/admin/tools'
     | '/admin/users'
     | '/admin/'
+    | '/api/public/agents'
     | '/api/public/health'
     | '/api/public/nft/$assetId'
     | '/api/public/telegram/login'
@@ -184,15 +225,19 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/mcp'
     | '/privacy'
     | '/terms'
     | '/war'
+    | '/war-room'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/economy'
     | '/admin/logs'
     | '/admin/nations'
     | '/admin/tools'
     | '/admin/users'
     | '/admin'
+    | '/api/public/agents'
     | '/api/public/health'
     | '/api/public/nft/$assetId'
     | '/api/public/telegram/login'
@@ -202,15 +247,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/mcp'
     | '/privacy'
     | '/terms'
     | '/war'
+    | '/war-room'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/economy'
     | '/admin/logs'
     | '/admin/nations'
     | '/admin/tools'
     | '/admin/users'
     | '/admin/'
+    | '/api/public/agents'
     | '/api/public/health'
     | '/api/public/nft/$assetId'
     | '/api/public/telegram/login'
@@ -221,9 +270,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   WarRoute: typeof WarRoute
+  WarRoomRoute: typeof WarRoomRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiPublicAgentsRoute: typeof ApiPublicAgentsRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicNftAssetIdRoute: typeof ApiPublicNftAssetIdRouteWithChildren
   ApiPublicTelegramLoginRoute: typeof ApiPublicTelegramLoginRoute
@@ -246,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -265,6 +325,20 @@ declare module '@tanstack/react-router' {
       path: '/war'
       fullPath: '/war'
       preLoaderRoute: typeof WarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/war-room': {
+      id: '/war-room'
+      path: '/war-room'
+      fullPath: '/war-room'
+      preLoaderRoute: typeof WarRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -308,6 +382,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/api/public/agents': {
+      id: '/api/public/agents'
+      path: '/api/public/agents'
+      fullPath: '/api/public/agents'
+      preLoaderRoute: typeof ApiPublicAgentsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/health': {
       id: '/api/public/health'
@@ -383,9 +464,14 @@ const ApiPublicNftAssetIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   WarRoute: WarRoute,
+  WarRoomRoute: WarRoomRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiPublicAgentsRoute: ApiPublicAgentsRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicNftAssetIdRoute: ApiPublicNftAssetIdRouteWithChildren,
   ApiPublicTelegramLoginRoute: ApiPublicTelegramLoginRoute,

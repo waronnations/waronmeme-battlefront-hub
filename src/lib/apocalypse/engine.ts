@@ -52,23 +52,38 @@ export function radiationBand(level: number): RadiationBand {
   return "calm";
 }
 
+/** Most radiation points faction trading can shield. */
+export const SHIELD_MAX = 15;
+/** Faction volume at which shielding reaches ~63% of its maximum. */
+export const SHIELD_VOLUME_USD = 250_000;
+
+/** Radiation points removed by the factions' combined 24h trading volume. */
+export function volumeShielding(factionVolumeUsd: number): number {
+  if (!(factionVolumeUsd > 0)) return 0;
+  return SHIELD_MAX * (1 - Math.exp(-factionVolumeUsd / SHIELD_VOLUME_USD));
+}
+
 export function radiationLevel({
   now,
   coins,
   start = BULLRUN_START,
   end = APOCALYPSE_AT,
+  factionVolumeUsd = 0,
 }: {
   now: number;
   coins: Pick<MarketCoin, "liquidityUsd" | "volume24hUsd">[];
   start?: number;
   end?: number;
+  /** Combined 24h volume of the faction coins; trading shields the clock. */
+  factionVolumeUsd?: number;
 }) {
   const progress = doomsdayProgress(now, start, end);
   const volatility = marketVolatility(coins);
   const timeRad = TIME_RADIATION_MAX * Math.pow(progress, 1.5);
   const marketRad = MARKET_RADIATION_MAX * volatility;
-  const level = progress >= 1 ? 100 : Math.round(Math.min(100, Math.max(0, timeRad + marketRad)));
-  return { level, band: radiationBand(level), progress, volatility, timeRad: Math.round(timeRad), marketRad: Math.round(marketRad) };
+  const shield = volumeShielding(factionVolumeUsd);
+  const level = progress >= 1 ? 100 : Math.round(Math.min(100, Math.max(0, timeRad + marketRad - shield)));
+  return { level, band: radiationBand(level), progress, volatility, timeRad: Math.round(timeRad), marketRad: Math.round(marketRad), shield: Math.round(shield) };
 }
 
 export type ApexEntry = {
@@ -167,6 +182,11 @@ export const BUNKER_PERKS: BunkerPerk[] = [
     id: "survivor-vote",
     title: "Survivor vote",
     text: "Every conviction holder adds 2 points to a coin's survival score — more than liquidity or volume can.",
+  },
+  {
+    id: "shielding",
+    title: "Trade shielding",
+    text: `Faction trading volume (UTYA, WARDOG, WARCAT, GRAM) blocks up to ${SHIELD_MAX} radiation points on the Doomsday clock.`,
   },
   {
     id: "landlord",

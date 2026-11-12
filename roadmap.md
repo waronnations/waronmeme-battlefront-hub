@@ -35,9 +35,11 @@
 # Multi-Chain & Apocalypse Overhaul
 
 - [x] Phase 1: Enemy lore transmission in Daily Command Briefing.
-- [ ] Phase 2: Public 3D War Room (/war-room), live HUD, audio, Share Battle Intel.
-- [ ] Phase 3: Public read-only agent tools (needs your OK on public access).
+- [x] Phase 2: Public 3D War Room (/war-room), live HUD, audio, Share Battle Intel.
+- [x] Phase 3: Public read-only agent tools (/mcp + /api/public/agents), approved as public.
 - [ ] Phase 4: Pump.fun route via Keeper + Air Support Bounties (Keeper Solana API unconfirmed).
 - [ ] Phase 5: Cosmetic data on device; payout data stays on server.
-- [ ] Phase 6: Faction buffs, volume shielding, Doomsday settlement (needs deployed WarVault).
-- [ ] Phase 7: ton_proof hardening, voucher replay/expiry tests, full verification.
+- [x] Phase 6a: Trade volume shields radiation on the Doomsday clock.
+- [ ] Phase 6b: Faction weapon effects + drop multipliers, Doomsday settlement vouchers (needs deployed WarVault + game database).
+- [x] Phase 7a: Real wallet signature check on admin login and wallet linking (admin login previously accepted a typed address).
+- [ ] Phase 7b: Bundle audit + live preview walkthrough of War Room.
