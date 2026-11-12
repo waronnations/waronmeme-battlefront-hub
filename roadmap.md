@@ -3,7 +3,7 @@
 - [x] Copy source application, routes, local images, contracts, scripts, and tests.
 - [x] Preserve target project identity, managed Cloud configuration, and pinned framework packages.
 - [x] Run copied tests: 142 passed across 21 files; typecheck reports build OK.
-- [ ] Verify preview navigation: blocked by preview plugin-host memory limit (3072MB) while loading the full source app.
+- [x] Verify preview navigation: dev server serves the full app (HTTP 200 in ~7ms, ~1.5GB RSS). Coin board / Operations / Battlefield sub-tabs, War / Season / Nations / Rewards / Profile bottom tabs, and /war, /privacy, /terms, /admin all render with zero console or page errors. Startup pop-ups (Field Manual, Daily Command Briefing) must be dismissed before tabs accept clicks.
 - [ ] Connect original external services: requires provider credentials not included in snapshots.
 - [ ] Import existing player data: requires source-project exports; code checkout contains no database records.
 
