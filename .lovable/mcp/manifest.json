@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "sdk_version": "3.5.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "remix-of-waronmeme",
+      "version": "0.1.0",
+      "title": "Remix of Waronmeme"
+    },
+    "tools": [
+      {
+        "name": "get_battlefield_state",
+        "title": "Get battlefield state",
+        "description": "Live faction sector holdings, 24h faction and market volume, radiation level and the latest public combat feed.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_sector_dominance",
+        "title": "Get sector dominance",
+        "description": "24h trading volume, liquidity, price and control share for each faction memecoin (UTYA, WARDOG, WARCAT, GRAM).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_vault_status",
+        "title": "Get War Vault status",
+        "description": "This week's War Vault prize pool per asset (GRAM and faction tokens) and 7-day totals of paid claims. Aggregates only.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_apocalypse_timer",
+        "title": "Get Apocalypse timer",
+        "description": "Doomsday clock countdown and the ranked surviving factions by survival score.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
