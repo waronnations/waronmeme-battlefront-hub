@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ANTAGONIST_TRANSMISSION } from "@/lib/briefing/lore";
 import { Crosshair, Gift } from "lucide-react";
 import { TIER_RULES, type CoinTier, type MarketCoin } from "@/lib/war-cycle/cycle";
 import { hapticNotify } from "@/lib/telegram";
@@ -42,6 +43,19 @@ export function CommandBriefing({
   const board = (data?.board ?? null) as Record<CoinTier, MarketCoin[]> | null;
   const [claimed, setClaimed] = useState(false);
 
+  const [lines, setLines] = useState(0);
+  useEffect(() => {
+    if (!open) return;
+    setLines(0);
+    const id = window.setInterval(() => {
+      setLines((n) => {
+        if (n >= ANTAGONIST_TRANSMISSION.length) { window.clearInterval(id); return n; }
+        return n + 1;
+      });
+    }, 900);
+    return () => window.clearInterval(id);
+  }, [open]);
+
   const front = useMemo(() => frontLine(board), [board]);
   const glory = 100 + streak * 25;
 
@@ -64,6 +78,19 @@ export function CommandBriefing({
         </TacticalCTA>
       }
     >
+      <TacticalSection label="Enemy transmission">
+        <div className="mt-1 space-y-1 text-sm italic text-foreground" aria-live="polite">
+          {ANTAGONIST_TRANSMISSION.slice(0, Math.max(1, lines)).map((l) => (
+            <p key={l} className="animate-in fade-in">{l}</p>
+          ))}
+        </div>
+        {lines < ANTAGONIST_TRANSMISSION.length && (
+          <button type="button" onClick={() => setLines(ANTAGONIST_TRANSMISSION.length)} className="mt-2 hud-label underline">
+            Skip transmission
+          </button>
+        )}
+      </TacticalSection>
+
       <div className="mt-3">
         <WarChestTicker compact />
       </div>

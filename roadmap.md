@@ -31,3 +31,13 @@
 - [x] Graduation indicator and bonding-curve progress for memepad tokens.
 - [ ] Memes Lab route: no public bonding-curve data found; needs a data source or link from the team.
 - [ ] $WARCAT routes: no pool with liquidity on any DEX yet.
+
+# Multi-Chain & Apocalypse Overhaul
+
+- [x] Phase 1: Enemy lore transmission in Daily Command Briefing.
+- [ ] Phase 2: Public 3D War Room (/war-room), live HUD, audio, Share Battle Intel.
+- [ ] Phase 3: Public read-only agent tools (needs your OK on public access).
+- [ ] Phase 4: Pump.fun route via Keeper + Air Support Bounties (Keeper Solana API unconfirmed).
+- [ ] Phase 5: Cosmetic data on device; payout data stays on server.
+- [ ] Phase 6: Faction buffs, volume shielding, Doomsday settlement (needs deployed WarVault).
+- [ ] Phase 7: ton_proof hardening, voucher replay/expiry tests, full verification.
