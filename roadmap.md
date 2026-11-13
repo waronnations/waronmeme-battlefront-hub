@@ -43,3 +43,11 @@
 - [ ] Phase 6b: Faction weapon effects + drop multipliers, Doomsday settlement vouchers (needs deployed WarVault + game database).
 - [x] Phase 7a: Real wallet signature check on admin login and wallet linking (admin login previously accepted a typed address).
 - [ ] Phase 7b: Bundle audit + live preview walkthrough of War Room.
+
+# Wire-up + Bunker LP (Nov 13)
+
+- [x] Run the game's own data on Lovable Cloud (no external database needed); session secret generated.
+- [x] Bunker LP: add liquidity in-game (STON.fi v2), pledge it until Doomsday, pledges count as survivor votes. Not yet signed with a real wallet.
+- [x] Coin board shows pool metrics: TVL, 24h volume, fee split (LP / protocol %), 24h LP fees, fee APR, bunker share.
+- [ ] Phase 5 cosmetic settings on device.
+- [ ] Phase 7b live walkthrough + bundle audit (player sign-in needs TELEGRAM_BOT_TOKEN).

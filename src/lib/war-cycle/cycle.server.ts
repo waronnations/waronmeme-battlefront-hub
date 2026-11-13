@@ -61,7 +61,15 @@ export async function setConviction(userId: number, coinMaster: string, amount: 
 
 export async function apocalypseStandings() {
   const coins = await getMarketCoins();
-  const { rows } = await sql`SELECT coin_master, COUNT(*)::int AS holders FROM conviction_positions WHERE amount > 0 GROUP BY coin_master`;
+  // Survivor votes: conviction holders plus Bunker LP pledgers (each player counts once per coin).
+  const { ensureBunkerTables } = await import("@/lib/bunker/lp.server");
+  await ensureBunkerTables();
+  const { rows } = await sql`
+    SELECT coin_master, COUNT(DISTINCT user_id)::int AS holders FROM (
+      SELECT user_id, coin_master FROM conviction_positions WHERE amount > 0
+      UNION
+      SELECT user_id, coin_master FROM bunker_lp_pledges WHERE status IN ('holding', 'survived')
+    ) votes GROUP BY coin_master`;
   const holders = new Map(rows.map((r) => [String(r["coin_master"]), Number(r["holders"])]));
   return coins
     .filter((c) => isHealthy(c) && classifyTier(c.liquidityUsd))

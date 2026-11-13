@@ -166,3 +166,8 @@ export async function buildSwapTx(input: {
 export async function getSwapStatus(routeId: number): Promise<SwapOutcome> {
   return swapOutcome(await getJson(`${COFFEE_API}/v2/route/result?route_id=${routeId}`));
 }
+
+/** swap.coffee safety verdict for one jetton (same rules as swaps). */
+export async function jettonSafety(address: string): Promise<Safety> {
+  return safetyOf((await coffeeJetton(address))?.verification);
+}

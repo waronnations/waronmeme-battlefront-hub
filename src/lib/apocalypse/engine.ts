@@ -189,6 +189,11 @@ export const BUNKER_PERKS: BunkerPerk[] = [
     text: `Faction trading volume (UTYA, WARDOG, WARCAT, GRAM) blocks up to ${SHIELD_MAX} radiation points on the Doomsday clock.`,
   },
   {
+    id: "bunker-lp",
+    title: "Bunker LP",
+    text: `Liquidity pledged in a coin's STON.fi pool until Doomsday counts as a survivor vote for that coin while the LP stays in your wallet — and it keeps earning the pool's swap fees.`,
+  },
+  {
     id: "landlord",
     title: "Landlord shelter",
     text: `TonMap Landlords get ×${LANDLORD_MULTIPLIER} on weekly War Vault payouts.`,
